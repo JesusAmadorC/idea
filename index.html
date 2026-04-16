@@ -290,6 +290,38 @@
       margin: -0.35rem 0 0.75rem;
       min-height: 1.25rem;
     }
+
+    .name-gate__prelude {
+      margin: 0 0 1.15rem;
+    }
+
+    .name-gate__prelude .name-gate__prelude-title {
+      margin: 0 0 0.75rem;
+    }
+
+    .name-gate__prelude[hidden] {
+      display: none;
+    }
+
+    .name-gate__prelude-text {
+      margin: 0;
+      font-size: 1.02rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .name-gate__prelude-text strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .name-gate__form[hidden] {
+      display: none;
+    }
+
+    .name-gate__intro[hidden] {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -297,11 +329,19 @@
 
   <div class="name-gate" id="nameGate" role="dialog" aria-modal="true" aria-labelledby="nameGateTitle" hidden>
     <div class="name-gate__card">
-      <h2 id="nameGateTitle">No sabía tu nombre</h2>
-      <p class="name-gate__lead">Pero si me lo dices prometo no olvidarlo.</p>
-      <label for="readerNameInput">Tu nombre</label>
-      <input type="text" id="readerNameInput" autocomplete="given-name" maxlength="40" placeholder="Ej. Ana" />
-      <p class="name-gate__error" id="nameGateError" aria-live="polite"></p>
+      <div class="name-gate__intro" id="nameGateIntro">
+        <h2 id="nameGateTitle">No sabía tu nombre</h2>
+        <p class="name-gate__lead">Pero si me lo dices prometo no olvidarlo.</p>
+      </div>
+      <div class="name-gate__form" id="nameGateForm">
+        <label for="readerNameInput">Tu nombre</label>
+        <input type="text" id="readerNameInput" autocomplete="given-name" maxlength="40" placeholder="Ej. Ana" />
+        <p class="name-gate__error" id="nameGateError" aria-live="polite"></p>
+      </div>
+      <div class="name-gate__prelude" id="nameGatePrelude" hidden>
+        <h2 class="name-gate__prelude-title" id="nameGatePreludeTitle">Wow, debí saberlo</h2>
+        <p class="name-gate__prelude-text" id="nameGatePreludeText"></p>
+      </div>
       <button type="button" class="btn-primary" id="nameGateSubmit" style="width: 100%">Comenzar</button>
     </div>
   </div>
@@ -406,7 +446,12 @@
       var nameInput = document.getElementById("readerNameInput");
       var nameSubmit = document.getElementById("nameGateSubmit");
       var nameError = document.getElementById("nameGateError");
+      var nameGateForm = document.getElementById("nameGateForm");
+      var nameGatePrelude = document.getElementById("nameGatePrelude");
+      var nameGatePreludeText = document.getElementById("nameGatePreludeText");
+      var nameGateIntro = document.getElementById("nameGateIntro");
       var storyBook = document.getElementById("storyBook");
+      var nameGateStep = 0;
 
       var chapters = document.querySelectorAll(".chapter");
       var total = chapters.length;
@@ -432,8 +477,22 @@
         }
       }
 
+      function resetNameGateUi() {
+        nameGateStep = 0;
+        if (nameGateIntro) nameGateIntro.removeAttribute("hidden");
+        if (nameGateForm) nameGateForm.removeAttribute("hidden");
+        if (nameGatePrelude) nameGatePrelude.setAttribute("hidden", "hidden");
+        if (nameGatePreludeText) nameGatePreludeText.textContent = "";
+        if (nameSubmit) nameSubmit.textContent = "Comenzar";
+        if (nameGate) {
+          nameGate.setAttribute("aria-labelledby", "nameGateTitle");
+          nameGate.removeAttribute("aria-describedby");
+        }
+      }
+
       function openNameGate() {
         if (!nameGate) return;
+        resetNameGateUi();
         nameGate.removeAttribute("hidden");
         var saved = "";
         try {
@@ -451,18 +510,48 @@
       }
 
       function confirmNameGate() {
-        if (!nameInput) return;
-        var raw = nameInput.value.trim();
-        if (!raw) {
-          if (nameError) nameError.textContent = "Escribe un nombre para continuar.";
+        if (!nameInput || !nameSubmit) return;
+        if (nameGateStep === 0) {
+          var raw = nameInput.value.trim();
+          if (!raw) {
+            if (nameError) nameError.textContent = "Vamos por buen camino, solo escribe tu nombre.";
+            return;
+          }
+          applyReaderName(raw);
+          if (nameError) nameError.textContent = "";
+          if (nameGateIntro) nameGateIntro.setAttribute("hidden", "hidden");
+          if (nameGateForm) nameGateForm.setAttribute("hidden", "hidden");
+          if (nameGatePrelude) nameGatePrelude.removeAttribute("hidden");
+          if (nameGate) {
+            nameGate.setAttribute("aria-labelledby", "nameGatePreludeTitle nameGatePreludeText");
+          }
+          if (nameGatePreludeText) {
+            nameGatePreludeText.textContent = "";
+            var nameStrong = document.createElement("strong");
+            nameStrong.textContent = raw;
+            nameGatePreludeText.appendChild(nameStrong);
+            nameGatePreludeText.appendChild(
+              document.createTextNode(
+                " es un nombre muy lindo; incluso en letra diminuta de términos y condiciones seguiría viéndose bien. " +
+                  "Me encantaría comenzar ya con la historia cuando le des al botón de abajo — sin prisa, el pingüino puede esperar (aunque ya hizo como que no mira)."
+              )
+            );
+          }
+          nameGateStep = 1;
+          nameSubmit.textContent = "Empezar la historia";
+          nameSubmit.focus();
           return;
         }
-        applyReaderName(raw);
-        try {
-          localStorage.setItem(NAME_STORAGE_KEY, raw);
-        } catch (e) {}
+        var finalName = (nameInput.value || "").trim();
+        if (!finalName) finalName = readerName;
+        if (finalName) {
+          try {
+            localStorage.setItem(NAME_STORAGE_KEY, finalName);
+          } catch (e) {}
+        }
         closeNameGate();
         if (nameInput) nameInput.blur();
+        resetNameGateUi();
       }
 
       if (nameSubmit) {
