@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Para Lily — misión imposible: decir hola</title>
+  <title>Historia interactiva — misión imposible: decir hola</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -208,20 +208,114 @@
         transition: none;
       }
     }
+
+    .name-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      background: rgba(15, 23, 41, 0.78);
+      backdrop-filter: blur(10px);
+    }
+
+    .name-gate[hidden] {
+      display: none;
+    }
+
+    .name-gate__card {
+      width: 100%;
+      max-width: 22rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(244, 114, 182, 0.1) inset;
+    }
+
+    .name-gate__card h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.35rem;
+      margin: 0 0 0.35rem;
+      color: var(--text);
+      background: linear-gradient(115deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .name-gate__card .name-gate__lead {
+      margin: 0 0 1rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .name-gate__card label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .name-gate__card input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.22);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .name-gate__card input::placeholder {
+      color: rgba(248, 250, 252, 0.38);
+    }
+
+    .name-gate__card input:focus {
+      outline: 2px solid var(--accent2);
+      outline-offset: 2px;
+    }
+
+    .name-gate__error {
+      font-size: 0.85rem;
+      color: #fda4af;
+      margin: -0.35rem 0 0.75rem;
+      min-height: 1.25rem;
+    }
   </style>
 </head>
 <body>
   <div class="stars" aria-hidden="true"></div>
-  <main class="book" role="application" aria-label="Historia interactiva para Lily">
+
+  <div class="name-gate" id="nameGate" role="dialog" aria-modal="true" aria-labelledby="nameGateTitle" hidden>
+    <div class="name-gate__card">
+      <h2 id="nameGateTitle">No sabía tu nombre</h2>
+      <p class="name-gate__lead">Pero si me lo dices prometo no olvidarlo.</p>
+      <label for="readerNameInput">Tu nombre</label>
+      <input type="text" id="readerNameInput" autocomplete="given-name" maxlength="40" placeholder="Ej. Ana" />
+      <p class="name-gate__error" id="nameGateError" aria-live="polite"></p>
+      <button type="button" class="btn-primary" id="nameGateSubmit" style="width: 100%">Comenzar</button>
+    </div>
+  </div>
+
+  <main class="book" id="storyBook" role="application" aria-label="Historia interactiva">
     <div class="progress" id="progress" aria-hidden="true"></div>
 
     <section class="chapter active" data-step="0" aria-live="polite">
       <span class="emoji" aria-hidden="true">🐧</span>
-      <h1>Capítulo 1: Lily vs. el hielo</h1>
-      <p>Hola, <strong style="color:#f8fafc">Lily</strong>. Intenté escribir un “hola” normal y mi cerebro dijo: <em>demasiado mainstream</em>. Así que aquí estamos: una página entera para no sonar como un bot de soporte técnico.</p>
+      <h1>Capítulo 1: <span class="name-slot"></span> vs. el hielo</h1>
+      <p>Hola, <strong style="color:#f8fafc"><span class="name-slot"></span></strong>. Intenté escribir un “hola” normal y mi cerebro dijo: <em>demasiado mainstream</em>. Así que aquí estamos: una página entera para no sonar como un bot de soporte técnico.</p>
       <p>Si sigues, prometo cero “¿cómo estás?” genéricos. Si quieres hablar del clima, ok, pero tendrá que ser con drama de telenovela. 🌧️</p>
       <div class="actions">
-        <button type="button" class="btn-primary" data-next="1">Sigo por curiosidad, Lily</button>
+        <button type="button" class="btn-primary" data-next="1">Sigo por curiosidad, <span class="name-slot"></span></button>
         <button type="button" class="btn-ghost" data-next="1">Ok, veamos el desastre</button>
       </div>
     </section>
@@ -229,11 +323,11 @@
     <section class="chapter" data-step="1" aria-live="polite">
       <span class="emoji" aria-hidden="true">🥤</span>
       <h1>Capítulo 2: Simulador de cita express</h1>
-      <p>Lily, el multiverso nos da <strong style="color:#f8fafc">cinco minutos</strong> en una cafetería donde el wifi falla justo cuando lo necesitas. ¿Qué hacemos?</p>
+      <p><span class="name-slot"></span>, el multiverso nos da <strong style="color:#f8fafc">cinco minutos</strong> en una cafetería donde el wifi falla justo cuando lo necesitas. ¿Qué hacemos?</p>
       <div class="actions">
         <button type="button" class="btn-primary" data-next="2" data-line="latte">Latte + platicar hasta que echen a alguien</button>
         <button type="button" class="btn-ghost" data-next="2" data-line="té">Té + un dato inútil pero memorable</button>
-        <button type="button" class="btn-ghost" data-next="2" data-line="postre">Postre primero (ley de Lily)</button>
+        <button type="button" class="btn-ghost" data-next="2" data-line="postre">Postre primero (ley de <span class="name-slot"></span>)</button>
       </div>
     </section>
 
@@ -241,7 +335,7 @@
       <span class="emoji" aria-hidden="true">🎬</span>
       <h1>Capítulo 3: El veredicto del guionista</h1>
       <p id="reaction"></p>
-      <p>En resumen: Lily, me caes bien solo por haber llegado aquí sin cerrar la pestaña. Eso ya es nivel pro.</p>
+      <p>En resumen: <span class="name-slot"></span>, me caes bien solo por haber llegado aquí sin cerrar la pestaña. Eso ya es nivel pro.</p>
       <div class="actions">
         <button type="button" class="btn-primary" data-next="3">Siguiente (con suspenso barato)</button>
       </div>
@@ -253,7 +347,7 @@
       <p>No voy a jurar que soy el protagonista de una película… pero sí puedo jurar que me encantaría hacerte reír en la vida real, no solo en HTML.</p>
       <p>Si te reíste aunque sea una vez, ya gané un logro desbloqueable. Si te gustó, el DLC incluye café, mensajes y menos pinguinos en la conversación (o más, tú decides).</p>
       <div class="actions">
-        <button type="button" class="btn-primary" data-next="4">Me gustó, Lily aprueba</button>
+        <button type="button" class="btn-primary" data-next="4">Me gustó, <span class="name-slot"></span> aprueba</button>
         <button type="button" class="btn-ghost" data-next="4">Necesito el director’s cut</button>
       </div>
     </section>
@@ -261,7 +355,7 @@
     <section class="chapter" data-step="4" aria-live="polite">
       <span class="emoji" aria-hidden="true">🌮</span>
       <h1>Fin: créditos con easter egg</h1>
-      <p>Lily, gracias por el click final. Eres oficialmente co-protagonista de la semana más random de mi galería de pestañas.</p>
+      <p><span class="name-slot"></span>, gracias por el click final. Eres oficialmente co-protagonista de la semana más random de mi galería de pestañas.</p>
       <p>Cuando quieras, grabamos el capítulo 2 fuera de pantalla: tú traes el chisme o el silencio cómodo; yo traigo las ganas de conocerte mejor (y café, si hace falta soborno).</p>
       <p class="footnote">PD: Si esto fue demasiado, culpa al pingüino. Si fue poco, avísame y subo el nivel de chiste. 💜</p>
       <div class="actions">
@@ -273,7 +367,7 @@
     <section class="chapter" data-step="5" aria-live="polite">
       <span class="emoji" aria-hidden="true">💌</span>
       <h1>Capítulo bonus: la pregunta seria</h1>
-      <p>Lily, después de tanto capítulo y un pingüino sospechoso, voy al grano con respeto y cero presión:</p>
+      <p><span class="name-slot"></span>, después de tanto capítulo y un pingüino sospechoso, voy al grano con respeto y cero presión:</p>
       <p><strong style="color:#f8fafc">¿Te interesaría salir para conocernos mejor?</strong> Café, caminata o lo que te haga sentir cómoda; el plan lo armamos juntos.</p>
       <div class="proposal-actions">
         <button type="button" class="btn-primary" data-next="6" id="btnSi">Sí</button>
@@ -305,6 +399,14 @@
        * Alternativas: Web3Forms, Getform, un servidor propio con Resend/SendGrid, etc.
        */
       var NOTIFY_FORM_URL = "https://formspree.io/f/xbdpvvjz";
+      var NAME_STORAGE_KEY = "historiaInteractivaNombre";
+
+      var readerName = "";
+      var nameGate = document.getElementById("nameGate");
+      var nameInput = document.getElementById("readerNameInput");
+      var nameSubmit = document.getElementById("nameGateSubmit");
+      var nameError = document.getElementById("nameGateError");
+      var storyBook = document.getElementById("storyBook");
 
       var chapters = document.querySelectorAll(".chapter");
       var total = chapters.length;
@@ -316,13 +418,85 @@
       var canFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
       var siNotifySent = false;
 
+      function applyReaderName(name) {
+        readerName = name;
+        var slots = document.querySelectorAll(".name-slot");
+        for (var s = 0; s < slots.length; s++) {
+          slots[s].textContent = readerName;
+        }
+        if (readerName) {
+          document.title = "Para " + readerName + " — misión imposible: decir hola";
+          if (storyBook) {
+            storyBook.setAttribute("aria-label", "Historia interactiva para " + readerName);
+          }
+        }
+      }
+
+      function openNameGate() {
+        if (!nameGate) return;
+        nameGate.removeAttribute("hidden");
+        var saved = "";
+        try {
+          saved = localStorage.getItem(NAME_STORAGE_KEY) || "";
+        } catch (e) {}
+        if (nameInput) {
+          nameInput.value = saved;
+          nameInput.focus();
+        }
+        if (nameError) nameError.textContent = "";
+      }
+
+      function closeNameGate() {
+        if (nameGate) nameGate.setAttribute("hidden", "hidden");
+      }
+
+      function confirmNameGate() {
+        if (!nameInput) return;
+        var raw = nameInput.value.trim();
+        if (!raw) {
+          if (nameError) nameError.textContent = "Escribe un nombre para continuar.";
+          return;
+        }
+        applyReaderName(raw);
+        try {
+          localStorage.setItem(NAME_STORAGE_KEY, raw);
+        } catch (e) {}
+        closeNameGate();
+        if (nameInput) nameInput.blur();
+      }
+
+      if (nameSubmit) {
+        nameSubmit.addEventListener("click", confirmNameGate);
+      }
+      if (nameInput) {
+        nameInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            confirmNameGate();
+          }
+        });
+      }
+
+      try {
+        var storedName = (localStorage.getItem(NAME_STORAGE_KEY) || "").trim();
+        if (storedName) {
+          applyReaderName(storedName);
+          closeNameGate();
+        } else {
+          openNameGate();
+        }
+      } catch (e) {
+        openNameGate();
+      }
+
       function notifySiClicked() {
         if (!NOTIFY_FORM_URL || siNotifySent) return;
         siNotifySent = true;
         var payload = {
-          _subject: "Historia para Lily: pulsó «Sí»",
+          _subject: "Historia para " + readerName + ": pulsó «Sí»",
           mensaje:
-            "Lily acepto salir y este correo es la evidencia. Fecha (navegador): " +
+            readerName +
+            " aceptó salir y este correo es la evidencia. Fecha (navegador): " +
             new Date().toLocaleString("es", { timeZoneName: "short" }),
         };
         fetch(NOTIFY_FORM_URL, {
@@ -437,9 +611,15 @@
         if (n === 2 && t.hasAttribute("data-line")) {
           var line = t.getAttribute("data-line");
           var messages = {
-            latte: "Elección de Lily: A+. Las charlas largas son deporte de alto rendimiento y tú ya traes medalla.",
+            latte:
+              "Elección de " +
+              readerName +
+              ": A+. Las charlas largas son deporte de alto rendimiento y tú ya traes medalla.",
             té: "Té + random = combo peligroso en el buen sentido. Ya quiero ese dato inútil en voz alta.",
-            postre: "Postre primero es filosofía, no antojo. Lily, respeto profundo a tu jurisprudencia dulce.",
+            postre:
+              "Postre primero es filosofía, no antojo. " +
+              readerName +
+              ", respeto profundo a tu jurisprudencia dulce.",
           };
           reactionEl.textContent = messages[line] || messages.latte;
         }
