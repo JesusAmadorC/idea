@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para Lily — misión imposible: decir hola</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg1: #0f1729;
+      --bg2: #1e1b4b;
+      --accent: #f472b6;
+      --accent2: #22d3ee;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --card: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Nunito", system-ui, sans-serif;
+      background: linear-gradient(155deg, var(--bg1) 0%, var(--bg2) 50%, #134e4a 100%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 15% 25%, rgba(255,255,255,0.35), transparent),
+        radial-gradient(2px 2px at 75% 65%, rgba(34,211,238,0.2), transparent),
+        radial-gradient(1px 1px at 40% 80%, rgba(244,114,182,0.35), transparent);
+      background-size: 220% 220%;
+      animation: drift 75s linear infinite;
+      opacity: 0.55;
+    }
+
+    @keyframes drift {
+      to { background-position: 100% 100%; }
+    }
+
+    .book {
+      position: relative;
+      width: 100%;
+      max-width: 28rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 2rem 1.75rem;
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(244, 114, 182, 0.1) inset;
+    }
+
+    .chapter {
+      display: none;
+      animation: fadeIn 0.55s ease;
+    }
+
+    .chapter.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .emoji {
+      font-size: 2.75rem;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 600;
+      font-size: 1.6rem;
+      margin: 0 0 0.75rem;
+      background: linear-gradient(115deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p {
+      margin: 0 0 1rem;
+      line-height: 1.65;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    p:last-of-type {
+      margin-bottom: 1.25rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+
+    button {
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.15rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #db2777);
+      color: white;
+      box-shadow: 0 4px 20px rgba(244, 114, 182, 0.35);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 28px rgba(244, 114, 182, 0.45);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .progress {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dot {
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      transition: background 0.3s ease;
+    }
+
+    .dot.on {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .footnote {
+      font-size: 0.8rem;
+      color: rgba(248, 250, 252, 0.45);
+      margin-top: 1.25rem;
+      text-align: center;
+    }
+
+    .proposal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .evade-zone {
+      position: relative;
+      min-height: 7.5rem;
+      width: 100%;
+      border-radius: 0.75rem;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px dashed rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+    }
+
+    .btn-flee {
+      position: absolute;
+      left: 0;
+      top: 0;
+      margin: 0;
+      z-index: 2;
+      transition: left 0.1s ease-out, top 0.1s ease-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn-flee {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <main class="book" role="application" aria-label="Historia interactiva para Lily">
+    <div class="progress" id="progress" aria-hidden="true"></div>
+
+    <section class="chapter active" data-step="0" aria-live="polite">
+      <span class="emoji" aria-hidden="true">🐧</span>
+      <h1>Capítulo 1: Lily vs. el hielo</h1>
+      <p>Hola, <strong style="color:#f8fafc">Lily</strong>. Intenté escribir un “hola” normal y mi cerebro dijo: <em>demasiado mainstream</em>. Así que aquí estamos: una página entera para no sonar como un bot de soporte técnico.</p>
+      <p>Si sigues, prometo cero “¿cómo estás?” genéricos. Si quieres hablar del clima, ok, pero tendrá que ser con drama de telenovela. 🌧️</p>
+      <div class="actions">
+        <button type="button" class="btn-primary" data-next="1">Sigo por curiosidad, Lily</button>
+        <button type="button" class="btn-ghost" data-next="1">Ok, veamos el desastre</button>
+      </div>
+    </section>
+
+    <section class="chapter" data-step="1" aria-live="polite">
+      <span class="emoji" aria-hidden="true">🥤</span>
+      <h1>Capítulo 2: Simulador de cita express</h1>
+      <p>Lily, el multiverso nos da <strong style="color:#f8fafc">cinco minutos</strong> en una cafetería donde el wifi falla justo cuando lo necesitas. ¿Qué hacemos?</p>
+      <div class="actions">
+        <button type="button" class="btn-primary" data-next="2" data-line="latte">Latte + platicar hasta que echen a alguien</button>
+        <button type="button" class="btn-ghost" data-next="2" data-line="té">Té + un dato inútil pero memorable</button>
+        <button type="button" class="btn-ghost" data-next="2" data-line="postre">Postre primero (ley de Lily)</button>
+      </div>
+    </section>
+
+    <section class="chapter" data-step="2" aria-live="polite">
+      <span class="emoji" aria-hidden="true">🎬</span>
+      <h1>Capítulo 3: El veredicto del guionista</h1>
+      <p id="reaction"></p>
+      <p>En resumen: Lily, me caes bien solo por haber llegado aquí sin cerrar la pestaña. Eso ya es nivel pro.</p>
+      <div class="actions">
+        <button type="button" class="btn-primary" data-next="3">Siguiente (con suspenso barato)</button>
+      </div>
+    </section>
+
+    <section class="chapter" data-step="3" aria-live="polite">
+      <span class="emoji" aria-hidden="true">🍿</span>
+      <h1>Capítulo 4: Modo romcom (con autocontrol)</h1>
+      <p>No voy a jurar que soy el protagonista de una película… pero sí puedo jurar que me encantaría hacerte reír en la vida real, no solo en HTML.</p>
+      <p>Si te reíste aunque sea una vez, ya gané un logro desbloqueable. Si te gustó, el DLC incluye café, mensajes y menos pinguinos en la conversación (o más, tú decides).</p>
+      <div class="actions">
+        <button type="button" class="btn-primary" data-next="4">Me gustó, Lily aprueba</button>
+        <button type="button" class="btn-ghost" data-next="4">Necesito el director’s cut</button>
+      </div>
+    </section>
+
+    <section class="chapter" data-step="4" aria-live="polite">
+      <span class="emoji" aria-hidden="true">🌮</span>
+      <h1>Fin: créditos con easter egg</h1>
+      <p>Lily, gracias por el click final. Eres oficialmente co-protagonista de la semana más random de mi galería de pestañas.</p>
+      <p>Cuando quieras, grabamos el capítulo 2 fuera de pantalla: tú traes el chisme o el silencio cómodo; yo traigo las ganas de conocerte mejor (y café, si hace falta soborno).</p>
+      <p class="footnote">PD: Si esto fue demasiado, culpa al pingüino. Si fue poco, avísame y subo el nivel de chiste. 💜</p>
+      <div class="actions">
+        <button type="button" class="btn-primary" data-next="5">Una última cosa…</button>
+        <button type="button" class="btn-ghost js-restart">Replay desde el hielo</button>
+      </div>
+    </section>
+
+    <section class="chapter" data-step="5" aria-live="polite">
+      <span class="emoji" aria-hidden="true">💌</span>
+      <h1>Capítulo bonus: la pregunta seria</h1>
+      <p>Lily, después de tanto capítulo y un pingüino sospechoso, voy al grano con respeto y cero presión:</p>
+      <p><strong style="color:#f8fafc">¿Te interesaría salir para conocernos mejor?</strong> Café, caminata o lo que te haga sentir cómoda; el plan lo armamos juntos.</p>
+      <div class="proposal-actions">
+        <button type="button" class="btn-primary" data-next="6" id="btnSi">Sí</button>
+        <div class="evade-zone" id="evadeZone">
+          <button type="button" class="btn-ghost btn-flee" id="btnNo">No</button>
+        </div>
+      </div>
+      <div class="actions" style="margin-top: 1rem">
+        <button type="button" class="btn-ghost js-restart">Volver al inicio</button>
+      </div>
+    </section>
+
+    <section class="chapter" data-step="6" aria-live="polite">
+      <span class="emoji" aria-hidden="true">🎉</span>
+      <h1>¡Qué buena noticia!</h1>
+      <p>Me hace mucha ilusión. Cuando quieras me escribes y coordinamos día, hora y si el pingüino viene o se queda en casa.</p>
+      <div class="actions">
+        <button type="button" class="btn-ghost js-restart">Replay desde el hielo</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      /**
+       * Notificación por correo al pulsar «Sí»:
+       * 1) Crea un formulario gratis en https://formspree.io y copia la URL (ej. https://formspree.io/f/abcdwxyz)
+       * 2) Pégala abajo en NOTIFY_FORM_URL. Si la dejas vacía, no se envía nada.
+       * Alternativas: Web3Forms, Getform, un servidor propio con Resend/SendGrid, etc.
+       */
+      var NOTIFY_FORM_URL = "https://formspree.io/f/xbdpvvjz";
+
+      var chapters = document.querySelectorAll(".chapter");
+      var total = chapters.length;
+      var progressEl = document.getElementById("progress");
+      var reactionEl = document.getElementById("reaction");
+      var evadeZone = document.getElementById("evadeZone");
+      var btnNo = document.getElementById("btnNo");
+      var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var canFinePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      var siNotifySent = false;
+
+      function notifySiClicked() {
+        if (!NOTIFY_FORM_URL || siNotifySent) return;
+        siNotifySent = true;
+        var payload = {
+          _subject: "Historia para Lily: pulsó «Sí»",
+          mensaje:
+            "Lily acepto salir y este correo es la evidencia. Fecha (navegador): " +
+            new Date().toLocaleString("es", { timeZoneName: "short" }),
+        };
+        fetch(NOTIFY_FORM_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        }).catch(function () {
+          siNotifySent = false;
+        });
+      }
+
+      for (var i = 0; i < total; i++) {
+        var d = document.createElement("div");
+        d.className = "dot" + (i === 0 ? " on" : "");
+        progressEl.appendChild(d);
+      }
+
+      var dots = progressEl.querySelectorAll(".dot");
+
+      function resetFleeButton() {
+        if (!btnNo) return;
+        btnNo.style.left = "";
+        btnNo.style.top = "";
+      }
+
+      function centerNoInZone() {
+        if (!evadeZone || !btnNo) return;
+        var zw = evadeZone.clientWidth;
+        var zh = evadeZone.clientHeight;
+        var bw = btnNo.offsetWidth;
+        var bh = btnNo.offsetHeight;
+        var x = Math.max(4, (zw - bw) / 2);
+        var y = Math.max(4, (zh - bh) / 2);
+        btnNo.style.left = x + "px";
+        btnNo.style.top = y + "px";
+      }
+
+      function dodgeNo() {
+        if (!evadeZone || !btnNo || prefersReducedMotion) return;
+        var now = Date.now();
+        if (now - dodgeNo._last < 90) return;
+        dodgeNo._last = now;
+        var pad = 6;
+        var zw = evadeZone.clientWidth;
+        var zh = evadeZone.clientHeight;
+        var bw = btnNo.offsetWidth;
+        var bh = btnNo.offsetHeight;
+        var maxX = Math.max(pad, zw - bw - pad);
+        var maxY = Math.max(pad, zh - bh - pad);
+        btnNo.style.left = Math.floor(pad + Math.random() * (maxX - pad)) + "px";
+        btnNo.style.top = Math.floor(pad + Math.random() * (maxY - pad)) + "px";
+      }
+
+      dodgeNo._last = 0;
+
+      if (btnNo) {
+        if (canFinePointer && !prefersReducedMotion) {
+          btnNo.addEventListener("mouseenter", dodgeNo);
+        }
+        btnNo.addEventListener(
+          "pointerdown",
+          function (e) {
+            if (e.pointerType === "touch" || e.pointerType === "pen") {
+              e.preventDefault();
+              dodgeNo();
+            }
+          },
+          { passive: false }
+        );
+        btnNo.addEventListener("click", function (e) {
+          e.preventDefault();
+          dodgeNo();
+        });
+      }
+
+      function showStep(index) {
+        for (var i = 0; i < chapters.length; i++) {
+          chapters[i].classList.toggle("active", i === index);
+          if (dots[i]) dots[i].classList.toggle("on", i <= index);
+        }
+        if (index === 5) {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(centerNoInZone);
+          });
+        }
+      }
+
+      document.querySelector(".book").addEventListener("click", function (e) {
+        var t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+
+        if (t.classList.contains("js-restart")) {
+          resetFleeButton();
+          siNotifySent = false;
+          showStep(0);
+          return;
+        }
+
+        if (t.id === "btnNo") {
+          return;
+        }
+
+        var next = t.getAttribute("data-next");
+        if (next === null) return;
+        var n = parseInt(next, 10);
+        if (t.id === "btnSi") {
+          notifySiClicked();
+        }
+        if (n === 2 && t.hasAttribute("data-line")) {
+          var line = t.getAttribute("data-line");
+          var messages = {
+            latte: "Elección de Lily: A+. Las charlas largas son deporte de alto rendimiento y tú ya traes medalla.",
+            té: "Té + random = combo peligroso en el buen sentido. Ya quiero ese dato inútil en voz alta.",
+            postre: "Postre primero es filosofía, no antojo. Lily, respeto profundo a tu jurisprudencia dulce.",
+          };
+          reactionEl.textContent = messages[line] || messages.latte;
+        }
+        showStep(n);
+      });
+    })();
+  </script>
+</body>
+</html>
